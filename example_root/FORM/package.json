@@ -1,7 +1,7 @@
 {
-  "name": "hellothere",
-  "version": "0.0.0",
-  "description": "Has a dependency of hiiii",
+  "name": "FORM",
+  "version": "1.0.0",
+  "description": "Has a dependency of CB_PACKAGE",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,6 +9,7 @@
   "author": "Josh Clyde (jc44889)",
   "license": "ISC",
   "dependencies": {
-    "hiiii": "0.0.0"
+    "REDUX": "1.0.0",
+    "ORDER_SUMMARY": "1.0.0"
   }
 }
