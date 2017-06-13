@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // console.log("console.log output")
 
-var co = require('co');
-var prompt = require('co-prompt');
-var program = require('commander');
-var sh = require("shelljs");
+const co = require('co');
+const prompt = require('co-prompt');
+const program = require('commander');
+const sh = require("shelljs");
+const fs = require('fs');
 
 /*
   defining our arguments
@@ -24,11 +25,14 @@ program
 * @return {String} the current version number
 */
 const get_current_version = (path_to_file) => {
-  const version_line= sh.grep('version', path_to_file).toString();
-  // TODO: maybe make a more concrete regex to get version number
-  const reg_find_version = /\d.\d.\d/;
-  const current_version_num = version_line.match(reg_find_version).toString();
-  return current_version_num;
+  // using regex to find version
+  // const version_line= sh.grep('version', path_to_file).toString();
+  // const reg_find_version = /\d.\d.\d/;
+  // const current_version_num = version_line.match(reg_find_version).toString();
+
+  // using json to find version
+  const json = JSON.parse(fs.readFileSync(path_to_file, 'utf8'))
+  return json.version;
 }
 
 /*
@@ -79,6 +83,20 @@ const exec_npm_install = (project, dependency, version) => {
   sh.cd('..');
 }
 
+const update_dependency_version = (project, dependency, version) => {
+  // TODO: i dont think i want to edit the package.json directly. instead, should use npm commands. so this is temporary.
+  // using json to find dependency version and udpate it
+  let json = JSON.parse(fs.readFileSync(project + '/package.json', 'utf8'))
+  json.dependencies[dependency] = version;
+  fs.writeFile(project + '/package.json', JSON.stringify(json, null, '\t'), (err) => {
+    if (err) {
+        console.error(err);
+        return;
+    };
+    console.log(project + '/package.json has successfully updated to ' + dependency + '@' + version);
+  });
+}
+
 // the project that has been updated
 const dependency = program.args[0];
 // major, minor, or patch
@@ -94,7 +112,9 @@ const updated_version = update_version(current_version, which_version);
 console.log("New version: %s", updated_version);
 
 // update the projects version
-exec_npm_version(dependency, which_version);
+// exec_npm_version(dependency, which_version);
+
+update_dependency_version('hiiii', dependency, updated_version);
 
 
 // TODO: find all projects that have our project as a dependency
