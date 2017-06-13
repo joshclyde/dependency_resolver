@@ -59,6 +59,16 @@ const update_version = (current_version, which_version) => {
   return current_version_split.join('.');
 }
 
+const project_has_dependency = (path_to_file, dependency) => {
+  const json = JSON.parse(fs.readFileSync(path_to_file, 'utf8'))
+  return json !== undefined && json.dependencies !== undefined && json.dependencies[dependency] !== undefined;
+}
+
+const find_projects_with_dependency = (projects, dependency) => {
+  const projects_with = projects.filter((project) => { return project_has_dependency(project + '/package.json', dependency) });
+  return projects_with;
+}
+
 /*
 * Updates the version of the project
 * @param {String} project - the project to be updated
@@ -97,6 +107,10 @@ const update_dependency_version = (project, dependency, version) => {
   });
 }
 
+// print the dependency connections to the console
+// get the ordered list of commands to be executed
+
+
 // the project that has been updated
 const dependency = program.args[0];
 // major, minor, or patch
@@ -111,10 +125,19 @@ console.log("Current version: %s", current_version);
 const updated_version = update_version(current_version, which_version);
 console.log("New version: %s", updated_version);
 
+
+const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(p+"/"+f).isDirectory());
+// Get current directory of terminal
+const curr_dir = sh.pwd().toString()
+// Get all directories inside current directory
+const all_projects = dirs(curr_dir);
+const projects_with_dependency = find_projects_with_dependency(all_projects, dependency);
+console.log("Projects with dependency: %s", projects_with_dependency);
+
+
+
 // update the projects version
 // exec_npm_version(dependency, which_version);
-
-update_dependency_version('hiiii', dependency, updated_version);
 
 
 // TODO: find all projects that have our project as a dependency
