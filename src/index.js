@@ -7,6 +7,9 @@ const program = require('commander');
 const sh = require("shelljs");
 const fs = require('fs');
 
+const Graph = require('./graph').default;
+const Node = require('./node').default;
+
 /*
   defining our arguments
   arguments
@@ -59,13 +62,24 @@ const update_version = (current_version, which_version) => {
   return current_version_split.join('.');
 }
 
-const project_has_dependency = (path_to_file, dependency) => {
-  const json = JSON.parse(fs.readFileSync(path_to_file, 'utf8'))
-  return json !== undefined && json.dependencies !== undefined && json.dependencies[dependency] !== undefined;
-}
+const project_has_dependency = dependency =>
+  projectName => {
+    const json = JSON.parse(fs.readFileSync(`${projectName}/package.json`, 'utf8'));
+    return json !== undefined && json.dependencies !== undefined && json.dependencies[dependency] !== undefined;
+  }
+
+const getMetadataFromProjectName = projectName => {
+  const json = JSON.parse(fs.readFileSync(`${projectName}/package.json`, 'utf8'));
+  return {
+    version: json.version,
+    id: json.name,
+  }
+};
 
 const find_projects_with_dependency = (projects, dependency) => {
-  const projects_with = projects.filter((project) => { return project_has_dependency(project + '/package.json', dependency) });
+  const projects_with = projects
+    .filter(project_has_dependency(dependency))
+    .map(getMetadataFromProjectName);
   return projects_with;
 }
 
@@ -125,14 +139,31 @@ console.log("Current version: %s", current_version);
 const updated_version = update_version(current_version, which_version);
 console.log("New version: %s", updated_version);
 
-
 const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(p+"/"+f).isDirectory());
 // Get current directory of terminal
 const curr_dir = sh.pwd().toString()
 // Get all directories inside current directory
 const all_projects = dirs(curr_dir);
-const projects_with_dependency = find_projects_with_dependency(all_projects, dependency);
-console.log("Projects with dependency: %s", projects_with_dependency);
+
+
+const buildGraph = (dependency, dependencyGraph) => {
+  const projects_with_dependency = find_projects_with_dependency(all_projects, dependency);
+  const { version: dependencyVersion } = getMetadataFromProjectName(dependency);
+  const dependencyChildrenIds = projects_with_dependency
+    .map(({ id }) => id)
+  dependencyGraph.addNode(new Node(dependency, dependencyVersion, dependencyChildrenIds));
+  projects_with_dependency.forEach(({ id, version }) => {
+    dependencyGraph.addNode(new Node(id, version));
+    buildGraph(id, dependencyGraph);
+  });
+  return dependencyGraph;
+}
+
+const dependencyGraph = buildGraph(dependency, new Graph());
+
+
+console.log("Projects with dependency", dependencyGraph.toString());
+
 
 
 
