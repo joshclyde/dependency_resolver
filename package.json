@@ -9,12 +9,13 @@
   "author": "Josh Clyde (jc44889)",
   "license": "ISC",
   "bin": {
-    "resolvedep": "bin/index.js"
+    "resolvedep": "./src/index.js"
   },
   "dependencies": {
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "shelljs": "^0.7.8"
   },
   "repository": {
     "type": "git",
