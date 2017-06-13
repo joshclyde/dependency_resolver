@@ -1,0 +1,14 @@
+{
+  "name": "hiiii",
+  "version": "0.0.0",
+  "description": "Has a dependency of sample",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Josh Clyde (jc44889)",
+  "license": "ISC",
+  "dependencies": {
+    "sample": "0.0.0",
+  }
+}
