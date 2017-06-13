@@ -55,6 +55,29 @@ const update_version = (current_version, which_version) => {
   return current_version_split.join('.');
 }
 
+/*
+* Updates the version of the project
+* @param {String} project - the project to be updated
+* @param {String} which_version - major, minor, or patch
+*
+*/
+const exec_npm_version = (project, which_version) => {
+  sh.cd(project);
+  sh.exec('npm version ' + which_version);
+  sh.cd('..');
+}
+
+/*
+* Installs the dependency's version
+* @param {String} project - the project that has the dependency
+* @param {String} dependency - the dependency to be installed
+* @param {String} version - the version of the dependency
+*/
+const exec_npm_install = (project, dependency, version) => {
+  sh.cd(project);
+  sh.exec('npm install ' + dependency + '@' + version + ' --save --force');
+  sh.cd('..');
+}
 
 // the project that has been updated
 const dependency = program.args[0];
@@ -69,6 +92,10 @@ console.log("Current version: %s", current_version);
 // calculate the updated version
 const updated_version = update_version(current_version, which_version);
 console.log("New version: %s", updated_version);
+
+// update the projects version
+exec_npm_version(dependency, which_version);
+
 
 // TODO: find all projects that have our project as a dependency
 // TODO: since we are updating the projects that are dependent on our project, we must then
