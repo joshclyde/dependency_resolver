@@ -160,11 +160,15 @@ const buildGraph = (dependency, dependencyGraph) => {
 }
 
 const dependencyGraph = buildGraph(dependency, new Graph());
+// TODO: need to traverse the graph in bfs from root dependency and then figure out how to update what
 
-
+dependencyGraph.markNodeComplete(dependency);
 console.log("Projects with dependency", dependencyGraph.toString());
-
-
+console.log('----------------------------------------------')
+console.log('----------------------------------------------')
+console.log('----------------------------------------------')
+console.log('----------------------------------------------')
+console.log(dependencyGraph.traverseGraphDFS(dependency))
 
 
 // update the projects version
