@@ -32,6 +32,10 @@ class Node {
     return Array.from(this.connections);
   }
 
+  get allPackagesToUpdate() {
+    return Array.from(this.packagesToUpdate);
+  }
+
   toSerializable() {
     return {
       id: this.id,

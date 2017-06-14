@@ -34,7 +34,7 @@ const get_current_version = (path_to_file) => {
   // const current_version_num = version_line.match(reg_find_version).toString();
 
   // using json to find version
-  const json = JSON.parse(fs.readFileSync(path_to_file, 'utf8'))
+  const json = JSON.parse(fs.readFileSync(`${path_to_file}/package.json`, 'utf8'))
   return json.version;
 }
 
@@ -132,7 +132,7 @@ const which_version = program.args[1];
 console.log("Our dependency: %s and we are updating version %s", dependency, which_version);
 
 // get the current version of our project
-const current_version = get_current_version(dependency + '/package.json');
+const current_version = get_current_version(dependency);
 console.log("Current version: %s", current_version);
 
 // calculate the updated version
@@ -168,7 +168,26 @@ console.log('----------------------------------------------')
 console.log('----------------------------------------------')
 console.log('----------------------------------------------')
 console.log('----------------------------------------------')
-console.log(dependencyGraph.traverseGraphDFS(dependency))
+const updatePackage = node => {
+  console.log(`-------- ${node.id} ---------`);
+  // TODO: Prompt user for version to update as (patch minor major)
+  const version = which_version;
+  const packagesToUpdate = node.allPackagesToUpdate;
+  packagesToUpdate.forEach(packageName => {
+    // TODO: actually update the current package.json
+    console.log(packageName, get_current_version(packageName));
+  })
+  // TODO: actually udpate the version
+  console.log('new version', update_version(get_current_version(node.id), version));
+
+}
+
+const mapOfDependencies = dependencyGraph.traverseGraphDFS(dependency);
+Object.keys(mapOfDependencies)
+  .map(key => mapOfDependencies[key])
+  .sort((a, b) => a.depth - b.depth)
+  .forEach(updatePackage);
+
 
 
 // update the projects version
