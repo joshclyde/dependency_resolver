@@ -1,0 +1,14 @@
+{
+	"name": "LOGO",
+	"version": "1.0.3",
+	"description": "Has a dependency of C_PACKAGE",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Josh Clyde (jc44889)",
+	"license": "ISC",
+	"dependencies": {
+		"REDUX": "1.0.1"
+	}
+}

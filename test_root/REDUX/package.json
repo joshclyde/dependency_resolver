@@ -1,0 +1,12 @@
+{
+  "name": "REDUX",
+  "version": "1.0.1",
+  "description": "Will be the project that we update",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Josh Clyde (jc44889)",
+  "license": "ISC",
+  "dependencies": {}
+}
