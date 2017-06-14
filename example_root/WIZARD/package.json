@@ -1,6 +1,6 @@
 {
-  "name": "sample",
-  "version": "1.0.1",
+  "name": "WIZARD",
+  "version": "1.0.0",
   "description": "Will be the project that we update",
   "main": "index.js",
   "scripts": {
@@ -8,5 +8,7 @@
   },
   "author": "Josh Clyde (jc44889)",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "REDUX": "1.0.0"
+  }
 }
