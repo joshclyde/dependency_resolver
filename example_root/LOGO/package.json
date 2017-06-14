@@ -1,6 +1,6 @@
 {
 	"name": "LOGO",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "Has a dependency of C_PACKAGE",
 	"main": "index.js",
 	"scripts": {

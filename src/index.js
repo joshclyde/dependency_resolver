@@ -34,6 +34,7 @@ const get_current_version = (path_to_file) => {
   // const current_version_num = version_line.match(reg_find_version).toString();
 
   // using json to find version
+  console.log('trying to read', `${path_to_file}/package.json`)
   const json = JSON.parse(fs.readFileSync(`${path_to_file}/package.json`, 'utf8'))
   return json.version;
 }
@@ -107,18 +108,12 @@ const exec_npm_install = (project, dependency, version) => {
   sh.cd('..');
 }
 
-const update_dependency_version = (project, dependency, version) => {
+const update_dependency_version = (projectName, dependencyName, version) => {
   // TODO: i dont think i want to edit the package.json directly. instead, should use npm commands. so this is temporary.
-  // using json to find dependency version and udpate it
-  let json = JSON.parse(fs.readFileSync(project + '/package.json', 'utf8'))
-  json.dependencies[dependency] = version;
-  fs.writeFile(project + '/package.json', JSON.stringify(json, null, '\t'), (err) => {
-    if (err) {
-        console.error(err);
-        return;
-    };
-    console.log(project + '/package.json has successfully updated to ' + dependency + '@' + version);
-  });
+  // using json to find dependencyName version and udpate it
+  let json = JSON.parse(fs.readFileSync(projectName + '/package.json', 'utf8'))
+  json.dependencies[dependencyName] = version;
+  fs.writeFileSync(projectName + '/package.json', JSON.stringify(json, null, '\t'));
 }
 
 // print the dependency connections to the console
@@ -175,11 +170,13 @@ const updatePackage = node => {
   const packagesToUpdate = node.allPackagesToUpdate;
   packagesToUpdate.forEach(packageName => {
     // TODO: actually update the current package.json
-    console.log(packageName, get_current_version(packageName));
+    update_dependency_version(node.id, packageName, get_current_version(packageName))
+    console.log(packageName);
   })
   // TODO: actually udpate the version
-  console.log('new version', update_version(get_current_version(node.id), version));
-
+  // console.log('new version', update_version(get_current_version(node.id), version));
+  exec_npm_version(node.id, version);
+  console.log(node.id);
 }
 
 const mapOfDependencies = dependencyGraph.traverseGraphDFS(dependency);
