@@ -1,16 +1,27 @@
 
 class Node {
-  constructor(id, version, connections = []) {
+  constructor(id, version, connections = [], visited = false, depth = 0, packagesToUpdate = new Set()) {
     this.id = id;
     this.version = version;
     this.connections = new Set(connections);
-    this.complete = false;
-    this.depth = 0;
-    this.packagesToUpdate = new Set();
+    this.visited = visited;
+    this.depth = depth;
+    this.packagesToUpdate = packagesToUpdate;
   }
 
-  markComplete() {
-    this.complete = true;
+  deepClone() {
+    return new Node(
+      this.id,
+      this.version,
+      [...Array.from(this.connections)],
+      this.visited,
+      this.depth,
+      this.packagesToUpdate,
+    );
+  }
+
+  markVisited() {
+    this.visited = true;
     return this;
   }
 
@@ -28,6 +39,13 @@ class Node {
     return this;
   }
 
+  containsPackageToUpdate(nodeId) {
+    if (this.packagesToUpdate.has(nodeId)) {
+      return true;
+    }
+    return false;
+  }
+
   get allConnections() {
     return Array.from(this.connections);
   }
@@ -41,13 +59,13 @@ class Node {
       id: this.id,
       version: this.version,
       connections: Array.from(this.connections),
-      complete: this.complete,
+      visited: this.visited,
       depth: this.depth,
-      packagesToUpdate: Array.from(this.packagesToUpdate)
+      packagesToUpdate: Array.from(this.packagesToUpdate),
     };
   }
 }
 
 module.exports = {
-  default: Node
+  default: Node,
 };
