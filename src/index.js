@@ -70,40 +70,47 @@ const schema = [
     pattern: /^[yn]$/,
     description: 'Do you want to update this package? (y/n)',
   },
-  // {
-  //   name: 'versionName',
-  //   default: 'y',
-  //   pattern: /^[yn]$/,
-  //   description: 'Do you want to update this package? (y/n)',
-  //   // default: 'patch',
-  //   // pattern: /^patch|minor|major$/,
-  //   // description: 'Update version type (patch/minor/major)',
-  // },
+  {
+    name: 'versionName',
+    // default: 'y',
+    // pattern: /^[yn]$/,
+    // description: 'Do you want to update this package? (y/n)',
+    default: 'patch',
+    pattern: /^patch|minor|major$/,
+    description: 'Update version type (patch/minor/major)',
+    ask: function() {
+      // only ask for versionName if this project shouldUpdate
+      return prompt.history('shouldUpdate').value > 0;
+    }
+  },
 ];
 
-// const updatePackages = nodes => {
-//   if (nodes.length <= 0) {
-//     return;
-//   }
-//   const nodeCopy = [...nodes];
-//   const node = nodeCopy.shift();
-//   console.log(`\n\n\nupdating package: ${node.id}`);
-//   // TODO: Prompt user for version to update as (patch minor major)
-//   const packagesToUpdate = node.allPackagesToUpdate;
-//   packagesToUpdate.forEach(packageName => {
-//     updateDependencyVersion(node.id, packageName, getCurrentVersion(packageName));
-//     console.log(`updated ${packageName}`);
-//   });
-//   prompt.get(schema, (err, result) => {
-//     // if (err) {
-//     //   process.exit(1);
-//     // }
-//     if (result.shouldUpdate === 'y') {
-//       execNpmVersion(node.id, result.versionName || 'patch');
-//     }
-//     // updatePackages(nodeCopy);
-//   });
-// };
+const updatePackages = nodes => {
+  if (nodes.length <= 0) {
+    return;
+  }
+  const nodeCopy = [...nodes];
+  const node = nodeCopy.shift();
+  console.log(`\n\n\nupdating package: ${node.id}`);
+  // TODO: Prompt user for version to update as (patch minor major)
+  const packagesToUpdate = node.allPackagesToUpdate;
+  packagesToUpdate.forEach(packageName => {
+    updateDependencyVersion(node.id, packageName, getCurrentVersion(packageName));
+    console.log(`updated ${packageName}`);
+  });
+  prompt.get(schema, (err, result) => {
+    if (err) {
+      process.exit(1);
+    }
+    if (result.shouldUpdate === 'y') {
+      execNpmVersion(node.id, result.versionName || 'patch');
+    } else {
+      // nodes.forEach(i => {console.log(i.allPackagesToUpdate); i.removePackageToUpdate(node.id); console.log(i.allPackagesToUpdate);});
+      // nodes.forEach(i => i.removePackageToUpdate(node.id));
+    }
+    updatePackages(nodeCopy);
+  });
+};
 
 
 const updatePackage = node => {
@@ -135,9 +142,9 @@ if (!mapOfDependencies) {
     .map(key => mapOfDependencies[key])
     .sort((a, b) => a.depth - b.depth)
     .map(printThingsToUpdate(mapOfDependencies))
-    .forEach(updatePackage);
+    // .forEach(updatePackage);
 
-  // prompt.start();
-  // updatePackages(packagesToUpdate);
-  console.log('after prompt');
+  prompt.start();
+  updatePackages(packagesToUpdate);
+  // console.log('after prompt');
 }

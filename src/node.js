@@ -39,6 +39,11 @@ class Node {
     return this;
   }
 
+  removePackageToUpdate(node) {
+    this.packagesToUpdate.delete(node);
+    return this;
+  }
+
   containsPackageToUpdate(nodeId) {
     if (this.packagesToUpdate.has(nodeId)) {
       return true;
